@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robotics Business - Advanced Financial Suite (PRO)</title>
+    <!-- SheetJS for Excel Operations -->
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <!-- Chart.js for Visuals -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --secondary: #0ea5e9;
+            --accent: #8b5cf6;
+            --bg-grad-start: #f8fafc;
+            --bg-grad-end: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background: #f1f5f9;
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* --- Premium Header --- */
+        .app-header {
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 10;
+        }
+
+        .brand h1 {
+            font-size: 20px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        /* --- Toolbar --- */
+        .toolbar {
+            background: white;
+            border-bottom: 1px solid #cbd5e1;
+            padding: 10px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            z-index: 9;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .control-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 2px 5px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: white;
+            border: 1px solid #cbd5e1;
+            color: var(--text-main);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: #f8fafc;
+        }
+
+        /* --- Navigation --- */
+        .nav-tabs {
+            background: white;
+            padding: 0 30px;
+            display: flex;
+            gap: 2px;
+            overflow-x: auto;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .tab-btn {
+            padding: 12px 18px;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            color: var(--primary);
+            background: #f8fafc;
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        /* --- Workspace --- */
+        .workspace {
+            flex: 1;
+            padding: 25px 30px;
+            overflow-y: auto;
+            background: #f8fafc;
+        }
+
+        .tab-panel {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* --- Cards & Tables --- */
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 25px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .card-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8fafc;
+        }
+
+        .card-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .data-table th {
+            text-align: left;
+            padding: 12px 16px;
+            background: #f1f5f9;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .data-table td {
+            padding: 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .data-table input {
+            width: 100%;
+            padding: 12px 16px;
+            border: none;
+            background: transparent;
+            font-family: inherit;
+            font-size: 13px;
+            color: var(--text-main);
+            transition: background 0.2s;
+        }
+
+        .data-table input:focus {
+            background: #f0f9ff;
+            box-shadow: inset 0 0 0 2px var(--primary);
+        }
+
+        .data-table input[type="number"] {
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Specialized Columns */
+        .col-actual {
+            background-color: #f0fdf4;
+        }
+
+        .col-plan {
+            background-color: #fff;
+        }
+
+        .col-variance {
+            font-weight: bold;
+            text-align: right;
+            padding-right: 16px;
+        }
+
+        .data-table tr.total-row {
+            background: #f8fafc;
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+
+        .row-btn {
+            background: none;
+            border: none;
+            color: #cbd5e1;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .row-btn:hover {
+            color: var(--danger);
+            background: #fee2e2;
+        }
+
+        /* --- KPI Grid --- */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .kpi-tile {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-top: 4px solid var(--primary);
+        }
+
+        .kpi-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .kpi-value {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 5px;
+        }
+
+        .kpi-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .kpi-val-sm {
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        /* --- Gantt --- */
+        .gantt-container {
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .gantt-header {
+            display: flex;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .gantt-month {
+            min-width: 80px;
+            padding: 5px;
+            text-align: center;
+            font-size: 11px;
+            border-right: 1px solid #f1f5f9;
+        }
+
+        .gantt-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+            height: 30px;
+        }
+
+        .gantt-label {
+            min-width: 200px;
+            font-size: 13px;
+            padding-right: 10px;
+        }
+
+        .gantt-track {
+            flex: 1;
+            background: #f1f5f9;
+            height: 20px;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .gantt-bar {
+            position: absolute;
+            height: 100%;
+            border-radius: 4px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            padding-left: 5px;
+            box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header class="app-header">
+        <div class="brand">
+            <h1>🤖 Robotics Financial Suite <span
+                    style="font-size: 12px; background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 10px;">PRO</span>
+            </h1>
+        </div>
+        <div>
+            <button class="btn btn-secondary" onclick="exportFullModel()">📥 Export Full Excel</button>
+            <input type="file" id="excelUpload" accept=".xlsx, .xls" style="display: none;"
+                onchange="importFullModel(this)">
+            <button class="btn btn-primary" onclick="document.getElementById('excelUpload').click()">📤 Import
+                Model</button>
+        </div>
+    </header>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+        <div class="control-group">
+            <label class="control-label">Scenario</label>
+            <select id="scenarioSelect" onchange="runRecalculation()">
+                <option value="base" selected>Base Case (1.0)</option>
+                <option value="optimistic_high">Aggressive (+20%)</option>
+                <option value="pessimistic_mid">Weak (-20%)</option>
+            </select>
+            <span style="font-size:12px; color: #ef4444; margin-left: 10px;">* Live Correlation Active</span>
+        </div>
+        <div>
+            <button class="btn btn-primary" onclick="runRecalculation()">🔄 Refresh Global Data</button>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('dashboard')">Dashboard</button>
+        <button class="tab-btn" onclick="switchTab('pl')">Profit & Loss</button>
+        <button class="tab-btn" onclick="switchTab('balance')">Balance Sheet</button>
+        <button class="tab-btn" onclick="switchTab('cashflow')">Cash Flow</button>
+        <button class="tab-btn" onclick="switchTab('units')">Unit Economics</button>
+        <button class="tab-btn" onclick="switchTab('capex')">CapEx</button>
+        <button class="tab-btn" onclick="switchTab('pipeline')">Pipeline</button>
+        <button class="tab-btn" onclick="switchTab('gtm')">GTM Plan</button>
+        <button class="tab-btn" onclick="switchTab('gantt')">Gantt</button>
+    </nav>
+
+    <!-- Workspace -->
+    <main class="workspace">
+
+        <!-- DASHBOARD -->
+        <div id="tab-dashboard" class="tab-panel active">
+            <div class="kpi-grid" id="dashboard-kpis"></div>
+            <br>
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Performance: Actual vs Plan (Year 1)</h3>
+                </div>
+                <div style="padding: 20px; height: 320px;">
+                    <canvas id="mainChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- P&L -->
+        <div id="tab-pl" class="tab-panel">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Profit & Loss (Actuals vs Plan)</h3>
+                    <div class="card-actions"><button class="btn btn-secondary" onclick="addRow('pl')">+ Add
+                            Item</button></div>
+                </div>
+                <table class="data-table" id="pl-table">
+                    <thead>
+                        <tr>
+                            <th width="30%">Item</th>
+                            <th>Y1 Plan</th>
+                            <th class="col-actual">Y1 Actual</th>
+                            <th>Y2 Plan</th>
+                            <th>Y3 Plan</th>
+                            <th>Variance (Y1)</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- UNIT ECONOMICS -->
+        <div id="tab-units" class="tab-panel">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Unit Economics & Sales Volume</h3>
+                    <div class="card-actions"><button class="btn btn-secondary" onclick="addRow('units')">+ Add
+                            Product</button></div>
+                </div>
+                <table class="data-table" id="units-table">
+                    <thead>
+                        <tr>
+                            <th width="30%">Product</th>
+                            <th>Target Price</th>
+                            <th class="col-actual">Actual Price</th>
+                            <th>Target Units (Y1)</th>
+                            <th class="col-actual">Actual Units (Y1)</th>
+                            <th>Revenue (Actual)</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- BALANCE SHEET -->
+        <div id="tab-balance" class="tab-panel">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Balance Sheet</h3>
+                    <div class="card-actions"><button class="btn btn-secondary" onclick="addRow('balance')">+ Add
+                            Account</button></div>
+                </div>
+                <table class="data-table" id="balance-table">
+                    <thead>
+                        <tr>
+                            <th width="30%">Account</th>
+                            <th>Expected (Y1)</th>
+                            <th class="col-actual">Actual (Y1)</th>
+                            <th>Projection (Y2)</th>
+                            <th>Projection (Y3)</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- CASH FLOW -->
+        <div id="tab-cashflow" class="tab-panel">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Cash Flow Statement</h3>
+                    <div class="card-actions"><button class="btn btn-secondary" onclick="addRow('cashflow')">+ Add
+                            Row</button></div>
+                </div>
+                <table class="data-table" id="cashflow-table">
+                    <thead>
+                        <tr>
+                            <th width="30%">Activity</th>
+                            <th>Plan (Y1)</th>
+                            <th class="col-actual">Actual (Y1)</th>
+                            <th>Proj (Y2)</th>
+                            <th>Proj (Y3)</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- CAPEX -->
+        <div id="tab-capex" class="tab-panel">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Capital Expenditure (CapEx)</h3>
+                    <div class="card-actions"><button class="btn btn-secondary" onclick="addRow('capex')">+ Add
+                            Asset</button></div>
+                </div>
+                <table class="data-table" id="capex-table">
+                    <thead>
+                        <tr>
+                            <th width="30%">Asset</th>
+                            <th>Budget (Y1)</th>
+                            <th class="col-actual">Actual Cost</th>
+                            <th>Budget (Y2)</th>
+                            <th>Budget (Y3)</th>
+                            <th>Variance</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- PIPELINE -->
+        <div id="tab-pipeline" class="tab-panel">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Sales Pipeline</h3>
+                    <div class="card-actions"><button class="btn btn-secondary" onclick="addRow('pipeline')">+ Add
+                            Stage</button></div>
+                </div>
+                <table class="data-table" id="pipeline-table">
+                    <thead>
+                        <tr>
+                            <th width="30%">Stage</th>
+                            <th>Target Count</th>
+                            <th class="col-actual">Actual Count</th>
+                            <th>Est. Value (Cr)</th>
+                            <th>Actual Value (Cr)</th>
+                            <th>Weighted (Act)</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- GTM PLAN (NEW TAB) -->
+        <div id="tab-gtm" class="tab-panel">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Go-To-Market (GTM) Strategy Strategy</h3>
+                    <div class="card-actions">
+                        <button class="btn btn-secondary" onclick="addRow('gtm')">+ Add Channel</button>
+                    </div>
+                </div>
+                <table class="data-table" id="gtm-table">
+                    <thead>
+                        <tr>
+                            <th width="30%">Channel / Strategy</th>
+                            <th>Cost Budget</th>
+                            <th class="col-actual">Actual Spend</th>
+                            <th>Exp. Leads</th>
+                            <th class="col-actual">Actual Leads</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- GANTT -->
+        <div id="tab-gantt" class="tab-panel">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Implementation Roadmap</h3><button class="btn btn-secondary"
+                        onclick="addRow('gantt')">+ Add Task</button>
+                </div>
+                <div style="padding: 15px;">
+                    <div class="gantt-container" id="gantt-view"></div>
+                </div>
+                <table class="data-table" id="gantt-table">
+                    <thead>
+                        <tr>
+                            <th>Task</th>
+                            <th>Start</th>
+                            <th>Dur</th>
+                            <th>Owner</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // --- 1. ROBUST DATA MODEL ---
+        const DEFAULT_STATE = {
+            currentScenario: 'base',
+            pl: [
+                { id: 1, name: "Revenue", y1_plan: 39.8, y1_actual: 35.5, y2: 79.6, y3: 126.4, type: "revenue", auto: true },
+                { id: 2, name: "COGS", y1_plan: 26.5, y1_actual: 24.0, y2: 52.9, y3: 84.1, type: "expense" },
+                { id: 3, name: "R&D", y1_plan: 4.0, y1_actual: 4.2, y2: 5.5, y3: 7.0, type: "expense" },
+                { id: 4, name: "Sales & Marketing", y1_plan: 2.0, y1_actual: 1.8, y2: 3.2, y3: 5.0, type: "expense" },
+                { id: 5, name: "Admin", y1_plan: 1.4, y1_actual: 1.5, y2: 1.7, y3: 2.5, type: "expense" }
+            ],
+            units: [
+                { id: 1, name: "Cobot Palletizer", price_plan: 30.0, price_actual: 29.5, units_plan: 14, units_actual: 12 },
+                { id: 2, name: "AMR", price_plan: 18.0, price_actual: 18.0, units_plan: 18, units_actual: 15 },
+                { id: 3, name: "Warehouse Robot", price_plan: 25.0, price_actual: 24.5, units_plan: 14, units_actual: 10 }
+            ],
+            balance: [
+                { id: 1, name: "Cash", y1_plan: 5.2, y1_actual: 4.8, y2: 8.4, y3: 15.0 },
+                { id: 2, name: "Receivables", y1_plan: 8.4, y1_actual: 7.5, y2: 12.5, y3: 18.2 },
+                { id: 3, name: "Payables", y1_plan: 4.2, y1_actual: 4.0, y2: 6.0, y3: 8.5 }
+            ],
+            capex: [
+                { id: 1, name: "Factory Setup", y1_plan: 5.0, y1_actual: 5.5, y2: 2.0, y3: 1.5 },
+                { id: 2, name: "Machinery", y1_plan: 4.5, y1_actual: 4.2, y2: 3.0, y3: 2.0 }
+            ],
+            pipeline: [
+                { id: 1, stage: "Prospecting", count_plan: 1200, count_actual: 1150, val_plan: 60, val_actual: 58, prob: 10 },
+                { id: 2, stage: "Closed Won", count_plan: 105, count_actual: 98, val_plan: 15, val_actual: 14.2, prob: 100 }
+            ],
+            gtm: [
+                { id: 1, channel: "Trade Shows", budget: 0.5, actual_spend: 0.45, leads_plan: 200, leads_actual: 180, status: "Active" },
+                { id: 2, channel: "Digital Ads", budget: 0.8, actual_spend: 0.75, leads_plan: 500, leads_actual: 520, status: "Active" },
+                { id: 3, channel: "Direct Sales", budget: 0.7, actual_spend: 0.60, leads_plan: 300, leads_actual: 250, status: "Pending" }
+            ],
+            cashflow: [
+                { id: 1, name: "Net Income", y1_plan: -2.17, y1_actual: -3.5, y2: 3.65, y3: 8.95, type: "op", auto: true },
+                { id: 2, name: "Depreciation", y1_plan: 3.0, y1_actual: 3.0, y2: 4.6, y3: 6.6, type: "op" },
+                { id: 3, name: "CapEx", y1_plan: -11.5, y1_actual: -10.5, y2: -6.5, y3: -4.5, type: "inv", auto: true }
+            ],
+            gantt: [
+                { id: 1, task: "Setup", start: 1, dur: 3, owner: "COO", status: "Done" },
+                { id: 2, task: "Launch", start: 4, dur: 2, owner: "CMO", status: "Pending" }
+            ],
+            scenarios: { "base": 1.0, "optimistic_high": 1.2, "pessimistic_mid": 0.8 }
+        };
+
+        let appState = JSON.parse(JSON.stringify(DEFAULT_STATE));
+
+        // --- 2. ENGINE ---
+        window.addEventListener('DOMContentLoaded', () => {
+            loadState();
+            runRecalculation();
+        });
+
+        function loadState() {
+            const s = localStorage.getItem('robo_suite_v4');
+            if (s) appState = { ...DEFAULT_STATE, ...JSON.parse(s) };
+        }
+        function saveState() {
+            localStorage.setItem('robo_suite_v4', JSON.stringify(appState)); // Version Bump in key
+        }
+
+        function switchTab(id) {
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('tab-' + id)?.classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // --- 3. CORRELATION LOGIC ---
+        function runRecalculation() {
+            // Units -> P&L Revenue
+            const unitsRevPlan = appState.units.reduce((s, i) => s + (i.price_plan * i.units_plan), 0);
+            const unitsRevAct = appState.units.reduce((s, i) => s + (i.price_actual * i.units_actual), 0);
+            const plRev = appState.pl.find(i => i.name === "Revenue");
+            if (plRev) {
+                plRev.y1_plan = unitsRevPlan / 100;
+                plRev.y1_actual = unitsRevAct / 100;
+            }
+
+            // CapEx -> Cash Flow CapEx
+            const totalCapexPlan = appState.capex.reduce((s, i) => s + i.y1_plan, 0);
+            const totalCapexAct = appState.capex.reduce((s, i) => s + i.y1_actual, 0);
+            const cfCapex = appState.cashflow.find(i => i.name === "CapEx");
+            if (cfCapex) {
+                cfCapex.y1_plan = -totalCapexPlan;
+                cfCapex.y1_actual = -totalCapexAct;
+            }
+
+            // P&L Net Income -> Cash Flow Net Income
+            const revPlan = appState.pl.filter(i => i.type === 'revenue').reduce((s, i) => s + i.y1_plan, 0);
+            const expPlan = appState.pl.filter(i => i.type === 'expense').reduce((s, i) => s + i.y1_plan, 0);
+            const revAct = appState.pl.filter(i => i.type === 'revenue').reduce((s, i) => s + i.y1_actual, 0);
+            const expAct = appState.pl.filter(i => i.type === 'expense').reduce((s, i) => s + i.y1_actual, 0);
+            const cfNet = appState.cashflow.find(i => i.name === "Net Income");
+            if (cfNet) {
+                cfNet.y1_plan = revPlan - expPlan;
+                cfNet.y1_actual = revAct - expAct;
+            }
+
+            saveState();
+            renderAll();
+        }
+
+        // --- 4. RENDERERS ---
+        function renderAll() {
+            renderDashboard();
+            renderPL(); renderUnits(); renderBalance(); renderCashflow(); renderCapex(); renderPipeline(); renderGTM(); renderGantt();
+        }
+
+        const inp = (d, id, f, v, ro = '') => `<input type="number" step="0.01" value="${(v || 0).toFixed(2)}" ${ro} onchange="upd('${d}', ${id}, '${f}', this.value)">`;
+        const txt = (d, id, f, v) => `<input type="text" value="${v || ''}" onchange="upd('${d}', ${id}, '${f}', this.value)">`;
+        const del = (d, id) => `<button class="row-btn" onclick="delRow('${d}', ${id})">×</button>`;
+
+        function renderPL() {
+            document.querySelector('#pl-table tbody').innerHTML = appState.pl.map(i => {
+                const variance = i.y1_plan ? ((i.y1_actual - i.y1_plan) / i.y1_plan * 100).toFixed(1) : 0;
+                const color = i.type === 'revenue' ? (variance >= 0 ? '#10b981' : '#ef4444') : (variance <= 0 ? '#10b981' : '#ef4444');
+                return `<tr><td>${txt('pl', i.id, 'name', i.name)}</td><td class="col-plan">${inp('pl', i.id, 'y1_plan', i.y1_plan)}</td><td class="col-actual">${inp('pl', i.id, 'y1_actual', i.y1_actual)}</td><td>${inp('pl', i.id, 'y2', i.y2)}</td><td>${inp('pl', i.id, 'y3', i.y3)}</td><td class="col-variance" style="color:${color}">${variance}%</td><td class="action-cell">${del('pl', i.id)}</td></tr>`;
+            }).join('');
+        }
+        function renderUnits() {
+            document.querySelector('#units-table tbody').innerHTML = appState.units.map(i => {
+                return `<tr><td>${txt('units', i.id, 'name', i.name)}</td><td class="col-plan">${inp('units', i.id, 'price_plan', i.price_plan)}</td><td class="col-actual">${inp('units', i.id, 'price_actual', i.price_actual)}</td><td class="col-plan">${inp('units', i.id, 'units_plan', i.units_plan, '1')}</td><td class="col-actual">${inp('units', i.id, 'units_actual', i.units_actual, '1')}</td><td><strong>₹${((i.price_actual * i.units_actual) / 100).toFixed(2)} Cr</strong></td><td class="action-cell">${del('units', i.id)}</td></tr>`;
+            }).join('');
+        }
+        function renderBalance() {
+            document.querySelector('#balance-table tbody').innerHTML = appState.balance.map(i => `<tr><td>${txt('balance', i.id, 'name', i.name)}</td><td class="col-plan">${inp('balance', i.id, 'y1_plan', i.y1_plan)}</td><td class="col-actual">${inp('balance', i.id, 'y1_actual', i.y1_actual)}</td><td>${inp('balance', i.id, 'y2', i.y2)}</td><td>${inp('balance', i.id, 'y3', i.y3)}</td><td class="action-cell">${del('balance', i.id)}</td></tr>`).join('');
+        }
+        function renderCashflow() {
+            document.querySelector('#cashflow-table tbody').innerHTML = appState.cashflow.map(i => `<tr><td>${txt('cashflow', i.id, 'name', i.name)}</td><td class="col-plan">${inp('cashflow', i.id, 'y1_plan', i.y1_plan)}</td><td class="col-actual">${inp('cashflow', i.id, 'y1_actual', i.y1_actual)}</td><td>${inp('cashflow', i.id, 'y2', i.y2)}</td><td>${inp('cashflow', i.id, 'y3', i.y3)}</td><td class="action-cell">${del('cashflow', i.id)}</td></tr>`).join('');
+        }
+        function renderCapex() {
+            document.querySelector('#capex-table tbody').innerHTML = appState.capex.map(i => `<tr><td>${txt('capex', i.id, 'name', i.name)}</td><td class="col-plan">${inp('capex', i.id, 'y1_plan', i.y1_plan)}</td><td class="col-actual">${inp('capex', i.id, 'y1_actual', i.y1_actual)}</td><td>${inp('capex', i.id, 'y2', i.y2)}</td><td>${inp('capex', i.id, 'y3', i.y3)}</td><td class="col-variance">${(i.y1_actual - i.y1_plan).toFixed(2)}</td><td class="action-cell">${del('capex', i.id)}</td></tr>`).join('');
+        }
+        function renderPipeline() {
+            document.querySelector('#pipeline-table tbody').innerHTML = appState.pipeline.map(i => `<tr><td>${txt('pipeline', i.id, 'stage', i.stage)}</td><td class="col-plan">${inp('pipeline', i.id, 'count_plan', i.count_plan, '1')}</td><td class="col-actual">${inp('pipeline', i.id, 'count_actual', i.count_actual, '1')}</td><td>${inp('pipeline', i.id, 'val_plan', i.val_plan)}</td><td class="col-actual">${inp('pipeline', i.id, 'val_actual', i.val_actual)}</td><td><strong>${(i.val_actual * i.prob / 100).toFixed(2)}</strong></td><td class="action-cell">${del('pipeline', i.id)}</td></tr>`).join('');
+        }
+        function renderGTM() {
+            document.querySelector('#gtm-table tbody').innerHTML = appState.gtm.map(i => `<tr>
+                 <td>${txt('gtm', i.id, 'channel', i.channel)}</td>
+                 <td class="col-plan">${inp('gtm', i.id, 'budget', i.budget)}</td>
+                 <td class="col-actual">${inp('gtm', i.id, 'actual_spend', i.actual_spend)}</td>
+                 <td class="col-plan">${inp('gtm', i.id, 'leads_plan', i.leads_plan, '1')}</td>
+                 <td class="col-actual">${inp('gtm', i.id, 'leads_actual', i.leads_actual, '1')}</td>
+                 <td>${txt('gtm', i.id, 'status', i.status)}</td>
+                 <td class="action-cell">${del('gtm', i.id)}</td>
+             </tr>`).join('');
+        }
+        function renderGantt() {
+            const v = document.getElementById('gantt-view');
+            if (v) {
+                let h = '<div class="gantt-header">';
+                for (let i = 1; i <= 24; i++) h += `<div class="gantt-month">${i}</div>`;
+                h += '</div>';
+                appState.gantt.forEach(g => {
+                    h += `<div class="gantt-row"><div class="gantt-label">${g.task}</div><div class="gantt-track"><div class="gantt-bar" style="left:${(g.start - 1) * 4.16}%; width:${g.dur * 4.16}%">${g.owner}</div></div></div>`;
+                });
+                v.innerHTML = h;
+            }
+            document.querySelector('#gantt-table tbody').innerHTML = appState.gantt.map(i => `<tr><td>${txt('gantt', i.id, 'task', i.task)}</td><td>${inp('gantt', i.id, 'start', i.start, '1')}</td><td>${inp('gantt', i.id, 'dur', i.dur, '1')}</td><td>${txt('gantt', i.id, 'owner', i.owner)}</td><td>${txt('gantt', i.id, 'status', i.status)}</td><td>${del('gantt', i.id)}</td></tr>`).join('');
+        }
+
+        function renderDashboard() {
+            const g = document.getElementById('dashboard-kpis');
+            const pRev = appState.pl.find(i => i.name === 'Revenue')?.y1_plan || 0;
+            const aRev = appState.pl.find(i => i.name === 'Revenue')?.y1_actual || 0;
+            const pCapex = appState.capex.reduce((s, i) => s + i.y1_plan, 0);
+            const aCapex = appState.capex.reduce((s, i) => s + i.y1_actual, 0);
+            const aLeads = appState.gtm ? appState.gtm.reduce((s, i) => s + i.leads_actual, 0) : 0;
+            const pLeads = appState.gtm ? appState.gtm.reduce((s, i) => s + i.leads_plan, 0) : 0;
+
+            g.innerHTML = `
+                <div class="kpi-tile">
+                    <div class="kpi-header">Revenue (Actual vs Plan)</div>
+                    <div class="kpi-value" style="color:${aRev >= pRev ? '#10b981' : '#ef4444'}">₹${aRev.toFixed(1)} Cr</div>
+                    <div class="kpi-row"><span class="kpi-val-sm">Target: ₹${pRev.toFixed(1)} Cr</span><span>${((aRev / pRev) * 100).toFixed(0)}% Achieved</span></div>
+                </div>
+                <div class="kpi-tile">
+                     <div class="kpi-header">CapEx Spend</div>
+                     <div class="kpi-value">₹${aCapex.toFixed(1)} Cr</div>
+                     <div class="kpi-row"><span class="kpi-val-sm">Budget: ₹${pCapex.toFixed(1)} Cr</span><span>Y1 Total</span></div>
+                </div>
+                 <div class="kpi-tile">
+                     <div class="kpi-header">GTM Leads</div>
+                     <div class="kpi-value">${aLeads}</div>
+                     <div class="kpi-row"><span class="kpi-val-sm">Target: ${pLeads}</span><span>Pipeline Entry</span></div>
+                </div>
+            `;
+
+            if (window.mainChart && window.mainChart.destroy) window.mainChart.destroy();
+            const ctx = document.getElementById('mainChart').getContext('2d');
+            window.mainChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Revenue', 'CapEx', 'GTM Leads'],
+                    datasets: [
+                        { label: 'Plan', data: [pRev, pCapex, pLeads], backgroundColor: '#94a3b8' },
+                        { label: 'Actual', data: [aRev, aCapex, aLeads], backgroundColor: ['#4f46e5', '#f59e0b', '#8b5cf6'] }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+
+        // --- ACTIONS ---
+        function upd(d, id, f, v) {
+            const row = appState[d].find(i => i.id === id);
+            if (row) { row[f] = isNaN(parseFloat(v)) ? v : parseFloat(v); runRecalculation(); }
+        }
+        function addRow(d) {
+            appState[d].push({ id: Date.now(), name: "New", y1_plan: 0, y1_actual: 0, y2: 0, y3: 0, type: 'general' });
+            runRecalculation();
+        }
+        function delRow(d, id) { appState[d] = appState[d].filter(i => i.id !== id); runRecalculation(); }
+
+        function exportFullModel() {
+            const wb = XLSX.utils.book_new();
+
+            // Helper: Clean and rename keys for export
+            const clean = (data, mapFn) => data.map(mapFn);
+
+            // 1. Overview Sheet
+            const overviewData = [
+                { "Metric": "Model Version", "Value": "Robotics Financial Suite v4.0 PRO" },
+                { "Metric": "Export Timestamp", "Value": new Date().toLocaleString() },
+                { "Metric": "Active Scenario", "Value": appState.currentScenario },
+                { "Metric": "Total Revenue (Y1 Actual)", "Value": document.querySelector('#dashboard-kpis .kpi-value')?.innerText || "N/A" }
+            ];
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(overviewData), "Executive Summary");
+
+            // 2. Profit & Loss
+            const plData = clean(appState.pl, i => ({
+                "Particulars": i.name,
+                "Type": i.type.toUpperCase(),
+                "Year 1 (Plan)": i.y1_plan,
+                "Year 1 (Actual)": i.y1_actual,
+                "Variance (%)": i.y1_plan ? ((i.y1_actual - i.y1_plan) / i.y1_plan * 100).toFixed(1) + "%" : "0%",
+                "Year 2 (Projection)": i.y2,
+                "Year 3 (Projection)": i.y3
+            }));
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(plData), "Profit & Loss");
+
+            // 3. Unit Economics
+            const unitsData = clean(appState.units, i => ({
+                "Product Name": i.name,
+                "Target Price (Cr/L)": i.price_plan,
+                "Actual Price (Cr/L)": i.price_actual,
+                "Target Units Sold": i.units_plan,
+                "Actual Units Sold": i.units_actual,
+                "Realized Revenue (Cr)": ((i.price_actual * i.units_actual) / 100).toFixed(2)
+            }));
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(unitsData), "Unit Economics");
+
+            // 4. GTM Plan
+            if (appState.gtm) {
+                const gtmData = clean(appState.gtm, i => ({
+                    "Marketing Channel": i.channel,
+                    "Budget Allocation (Cr)": i.budget,
+                    "Actual Spend (Cr)": i.actual_spend,
+                    "Expected Leads": i.leads_plan,
+                    "Actual Leads Generated": i.leads_actual,
+                    "Campaign Status": i.status
+                }));
+                XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(gtmData), "GTM Strategy");
+            }
+
+            // 5. Balance Sheet
+            const balData = clean(appState.balance, i => ({
+                "Account Name": i.name,
+                "Y1 (Expected)": i.y1_plan,
+                "Y1 (Actual)": i.y1_actual,
+                "Y2 (Projection)": i.y2,
+                "Y3 (Projection)": i.y3
+            }));
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(balData), "Balance Sheet");
+
+            // 6. Cash Flow
+            const cfData = clean(appState.cashflow, i => ({
+                "Activity": i.name,
+                "Y1 (Plan)": i.y1_plan,
+                "Y1 (Actual)": i.y1_actual,
+                "Y2 (Projection)": i.y2,
+                "Y3 (Projection)": i.y3
+            }));
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(cfData), "Cash Flow");
+
+            // 7. CapEx
+            const capexData = clean(appState.capex, i => ({
+                "Asset Category": i.name,
+                "Budget Y1 (Cr)": i.y1_plan,
+                "Actual Cost Y1 (Cr)": i.y1_actual,
+                "Variance (Cr)": (i.y1_actual - i.y1_plan).toFixed(2),
+                "Budget Y2 (Cr)": i.y2,
+                "Budget Y3 (Cr)": i.y3
+            }));
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(capexData), "CapEx Schedule");
+
+            // 8. Pipeline
+            const pipeData = clean(appState.pipeline, i => ({
+                "Sales Stage": i.stage,
+                "Target Leads": i.count_plan,
+                "Actual Leads": i.count_actual,
+                "Target Value (Cr)": i.val_plan,
+                "Actual Value (Cr)": i.val_actual,
+                "Probability": i.prob + "%",
+                "Weighted Value (Cr)": (i.val_actual * i.prob / 100).toFixed(2)
+            }));
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(pipeData), "Sales Pipeline");
+
+            // 9. Gantt
+            const ganttData = clean(appState.gantt, i => ({
+                "Task Name": i.task,
+                "Start Month": i.start,
+                "Duration (Months)": i.dur,
+                "Owner": i.owner,
+                "Status": i.status
+            }));
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(ganttData), "Implementation Plan");
+
+            XLSX.writeFile(wb, "Robotics_Suite_Detailed_Report.xlsx");
+        }
+
+        function importFullModel(input) {
+            const f = input.files[0];
+            if (!f) return;
+
+            const r = new FileReader();
+            r.onload = e => {
+                try {
+                    const d = new Uint8Array(e.target.result);
+                    const wb = XLSX.read(d, { type: 'array' });
+
+                    // Helper to map excel row to app state object
+                    const mapRow = (row, map) => {
+                        const obj = { id: Date.now() + Math.random() }; // New IDs to avoid collision
+                        for (let [excelKey, appKey] of Object.entries(map)) {
+                            let val = row[excelKey];
+
+                            // Data Cleaning
+                            if (typeof val === 'string') {
+                                // Remove %, Cr, space if it's meant to be a number but isn't
+                                if (appKey.includes('prob')) val = parseFloat(val.replace('%', ''));
+                                else if (!isNaN(parseFloat(val)) && appKey !== 'name' && appKey !== 'owner' && appKey !== 'status') val = parseFloat(val);
+                            }
+
+                            // Assign if not undefined
+                            if (val !== undefined) obj[appKey] = val;
+                        }
+                        return obj;
+                    };
+
+                    // Configuration: Sheet Name -> { Internal Dataset Key, Header Mapping }
+                    const configs = [
+                        {
+                            sheet: "Profit & Loss", key: "pl",
+                            map: { "Particulars": "name", "Type": "type", "Year 1 (Plan)": "y1_plan", "Year 1 (Actual)": "y1_actual", "Year 2 (Projection)": "y2", "Year 3 (Projection)": "y3" }
+                        },
+                        {
+                            sheet: "Unit Economics", key: "units",
+                            map: { "Product Name": "name", "Target Price (Cr/L)": "price_plan", "Actual Price (Cr/L)": "price_actual", "Target Units Sold": "units_plan", "Actual Units Sold": "units_actual" }
+                        },
+                        {
+                            sheet: "GTM Strategy", key: "gtm",
+                            map: { "Marketing Channel": "channel", "Budget Allocation (Cr)": "budget", "Actual Spend (Cr)": "actual_spend", "Expected Leads": "leads_plan", "Actual Leads Generated": "leads_actual", "Campaign Status": "status" }
+                        },
+                        {
+                            sheet: "Balance Sheet", key: "balance",
+                            map: { "Account Name": "name", "Y1 (Expected)": "y1_plan", "Y1 (Actual)": "y1_actual", "Y2 (Projection)": "y2", "Y3 (Projection)": "y3" }
+                        },
+                        {
+                            sheet: "Cash Flow", key: "cashflow",
+                            map: { "Activity": "name", "Y1 (Plan)": "y1_plan", "Y1 (Actual)": "y1_actual", "Y2 (Projection)": "y2", "Y3 (Projection)": "y3" }
+                        },
+                        {
+                            sheet: "CapEx Schedule", key: "capex",
+                            map: { "Asset Category": "name", "Budget Y1 (Cr)": "y1_plan", "Actual Cost Y1 (Cr)": "y1_actual", "Budget Y2 (Cr)": "y2", "Budget Y3 (Cr)": "y3" }
+                        },
+                        {
+                            sheet: "Sales Pipeline", key: "pipeline",
+                            map: { "Sales Stage": "stage", "Target Leads": "count_plan", "Actual Leads": "count_actual", "Target Value (Cr)": "val_plan", "Actual Value (Cr)": "val_actual", "Probability": "prob" }
+                        },
+                        {
+                            sheet: "Implementation Plan", key: "gantt",
+                            map: { "Task Name": "task", "Start Month": "start", "Duration (Months)": "dur", "Owner": "owner", "Status": "status" }
+                        }
+                    ];
+
+                    // Execute Import
+                    let importedCount = 0;
+                    configs.forEach(cfg => {
+                        const ws = wb.Sheets[cfg.sheet];
+                        if (ws) {
+                            const json = XLSX.utils.sheet_to_json(ws);
+                            if (json.length > 0) {
+                                // Map and replace state
+                                appState[cfg.key] = json.map(row => mapRow(row, cfg.map));
+
+                                // Fix types for specific fields if needed
+                                if (cfg.key === 'pl') appState[cfg.key].forEach(i => i.type = i.type ? i.type.toLowerCase() : 'general');
+
+                                importedCount++;
+                            }
+                        }
+                    });
+
+                    if (importedCount > 0) {
+                        saveState();
+                        runRecalculation(); // This also calls renderAll()
+                        alert(`Successfully imported model data from ${importedCount} sheets!`);
+                    } else {
+                        alert("No valid sheets found. Please ensure you are importing the 'Detailed Report' format.");
+                    }
+
+                } catch (err) {
+                    console.error(err);
+                    alert("Error importing file. Format may be incompatible.");
+                }
+            };
+            r.readAsArrayBuffer(f);
+        }
+    </script>
+</body>
+
+</html>
